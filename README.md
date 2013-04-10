@@ -1,6 +1,6 @@
 # rr
 
-Re-rerun a shell command. 
+Re-run a shell command. 
 
 ## Background
 
@@ -12,4 +12,4 @@ My first attempt at writing Go code.
 
     $ rr ruby spec/cats_spec.rb
 
-Hit <enter> to rerun passed command.
+Hit `enter` to rerun passed command.
