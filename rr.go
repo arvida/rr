@@ -32,12 +32,12 @@ func main() {
 	runs := 0
 	fails := 0
 	message := ""
-	message_color := ""
-	run_time := ""
+	messageColor := ""
+	runAt := ""
 
-	cols, terminal_err := terminalWidth()
-	if terminal_err != nil {
-		log.Fatalf("err: %q", terminal_err)
+	cols, err := terminalWidth()
+	if err != nil {
+		log.Fatalf("err: %q", err)
 	}
 
 	for {
@@ -47,19 +47,19 @@ func main() {
 
 		if exitStatus != 0 {
 			fails += 1
-			message_color = BgRed
+			messageColor = BgRed
 		} else {
-			message_color = BgGreen + FgBlack
+			messageColor = BgGreen + FgBlack
 		}
 
 		message = fmt.Sprintf(" Runs: %d ☂ Fails: %d", runs, fails)
 
-		run_time = time.Now().Format(time.Stamp)
+		runAt = time.Now().Format(time.Stamp)
 
-		bar := strings.Repeat(" ", cols-len(message)-len(run_time)+1)
+		bar := strings.Repeat(" ", cols-len(message)-len(runAt)+1)
 
 		fmt.Printf("\n")
-		fmt.Printf(message_color + message + bar + run_time + " " + Reset)
+		fmt.Printf(messageColor + message + bar + runAt + " " + Reset)
 
 		var input string
 		fmt.Scanln(&input)
