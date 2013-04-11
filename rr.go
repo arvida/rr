@@ -41,7 +41,7 @@ func main() {
 		}
 		color := colorTheme(exitStatus)
 
-		fmt.Println(statusBar(color, runs, fails))
+		fmt.Printf(statusBar(color, runs, fails))
 
 		var input string
 		fmt.Scanln(&input)
