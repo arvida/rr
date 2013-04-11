@@ -31,48 +31,25 @@ func main() {
 	command := strings.Join(os.Args[1:], " ")
 	runs := 0
 	fails := 0
-	message := ""
-	messageColor := ""
-	runAt := ""
-
-	cols, err := terminalWidth()
-	if err != nil {
-		log.Fatalf("err: %q", err)
-	}
 
 	for {
-		runs += 1
-
 		exitStatus := run(command)
 
+		runs += 1
 		if exitStatus != 0 {
 			fails += 1
-			messageColor = BgRed
-		} else {
-			messageColor = BgGreen + FgBlack
 		}
+		color := colorTheme(exitStatus)
 
-		message = fmt.Sprintf(" Runs: %d ☂ Fails: %d", runs, fails)
-
-		runAt = time.Now().Format(time.Stamp)
-
-		bar := strings.Repeat(" ", cols-len(message)-len(runAt)+1)
-
-		fmt.Printf("\n")
-		fmt.Printf(messageColor + message + bar + runAt + " " + Reset)
+		fmt.Println(statusBar(color, runs, fails))
 
 		var input string
 		fmt.Scanln(&input)
-
-		if input == "q" {
-			os.Exit(0)
-		}
 	}
 }
 
-func run(shellCmd string) (exitStatus int) {
-	exitStatus = 0
-
+func run(shellCmd string) int {
+	exitStatus := 0
 	command := exec.Command("/bin/sh", "-c", shellCmd)
 
 	command.Stdout = os.Stdout
@@ -92,11 +69,37 @@ func run(shellCmd string) (exitStatus int) {
 	return exitStatus
 }
 
-/* 
-  Get terminal window size
-  Stolen from: 
-  http://stackoverflow.com/questions/1733155/how-to-set-the-terminals-size
-*/
+func statusBar(color string, runs int, fails int) string {
+	cols, err := terminalWidth()
+	if err != nil {
+		log.Fatalf("err: %q", err)
+	}
+
+	status := fmt.Sprintf(" Runs: %d ☂ Fails: %d", runs, fails)
+	currentTime := timestamp()
+	textWidth := len(status) + len(currentTime)
+	spacing := strings.Repeat(" ", cols-textWidth)
+
+	return color + status + spacing + currentTime + " " + Reset
+}
+
+func timestamp() string {
+	now := time.Now()
+
+	return now.Format(time.Stamp)
+}
+
+func colorTheme(exitStatus int) string {
+	if exitStatus != 0 {
+		return BgRed
+	}
+
+	return BgGreen + FgBlack
+}
+
+//  Get terminal window size
+// Stolen from: 
+//  http://stackoverflow.com/questions/1733155/how-to-set-the-terminals-size
 
 const (
 	TIOCGWINSZ     = 0x5413
