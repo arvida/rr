@@ -33,6 +33,7 @@ func main() {
 	fails := 0
 
 	for {
+    fmt.Println()
 		exitStatus := run(command)
 
 		runs += 1
